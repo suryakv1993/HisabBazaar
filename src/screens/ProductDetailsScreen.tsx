@@ -9,12 +9,7 @@ import {
   Trash2, 
   Calculator, 
   Package, 
-  TrendingUp, 
-  TrendingDown, 
-  AlertTriangle,
-  Building2,
-  ShieldCheck,
-  Tag
+  Building2
 } from 'lucide-react';
 import { MarketplaceBadge } from '../components/MarketplaceBadge';
 

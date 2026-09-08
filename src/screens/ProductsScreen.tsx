@@ -4,15 +4,12 @@ import { ProductItem } from '../types';
 import { 
   Plus, 
   Search, 
-  SlidersHorizontal, 
-  Package, 
   TrendingUp, 
   AlertTriangle, 
   TrendingDown, 
   ChevronRight,
   PackageOpen,
-  Calculator,
-  ExternalLink
+  Calculator
 } from 'lucide-react';
 import { formatINR } from '../utils/formatters';
 import { MarketplaceBadge } from '../components/MarketplaceBadge';

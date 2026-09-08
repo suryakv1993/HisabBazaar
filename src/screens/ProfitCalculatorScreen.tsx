@@ -14,13 +14,7 @@ import {
   ArrowRight, 
   AlertCircle,
   RotateCcw,
-  SlidersHorizontal,
-  CheckCircle2,
-  BookmarkPlus,
-  HelpCircle,
-  Truck,
-  Percent,
-  Wallet
+  BookmarkPlus
 } from 'lucide-react';
 import { formatINR } from '../utils/formatters';
 import { BottomSheet } from '../components/BottomSheet';

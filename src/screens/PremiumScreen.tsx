@@ -4,13 +4,7 @@ import {
   ArrowLeft, 
   Crown, 
   Check, 
-  Sparkles, 
-  ShieldCheck, 
-  Zap, 
-  FileSpreadsheet, 
-  Lock, 
-  RotateCcw,
-  Star
+  Sparkles 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 

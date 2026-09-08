@@ -8,15 +8,11 @@ import {
   Percent, 
   History as HistoryIcon, 
   Settings as SettingsIcon,
-  PlusCircle,
   Bell,
   Sun,
   Moon,
   Crown,
-  TrendingUp,
-  LayoutDashboard,
-  Check,
-  X
+  LayoutDashboard
 } from 'lucide-react';
 import { BottomSheet } from './BottomSheet';
 
@@ -70,9 +66,6 @@ export const ResponsiveHeader: React.FC = () => {
                   <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-slate-100">
                     Hisab<span className="text-indigo-600 dark:text-indigo-400">Bazaar</span>
                   </span>
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60">
-                    India E-Com
-                  </span>
                 </div>
                 <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 block truncate max-w-[160px]">
                   {settings.businessName || 'Seller Hub'}
@@ -108,16 +101,6 @@ export const ResponsiveHeader: React.FC = () => {
 
             {/* Right: Quick Actions & Settings Controls */}
             <div className="flex items-center gap-2 shrink-0">
-              {/* Quick Calculate Button */}
-              <button
-                id="header-quick-calc-btn"
-                onClick={() => navigateTo('calculator')}
-                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-bold shadow-xs transition-all"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>Calculate</span>
-              </button>
-
               {/* Theme Toggle Button */}
               <button
                 id="header-theme-toggle"
@@ -142,7 +125,9 @@ export const ResponsiveHeader: React.FC = () => {
               >
                 <Bell className="w-4 h-4" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white dark:ring-slate-900" />
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-slate-900">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
                 )}
               </button>
 
@@ -201,7 +186,9 @@ export const ResponsiveHeader: React.FC = () => {
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white dark:ring-slate-900" />
+              <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-0.5 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-slate-900">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
             )}
           </button>
         </div>
@@ -228,29 +215,47 @@ export const ResponsiveHeader: React.FC = () => {
             )}
           </div>
 
-          <div className="space-y-2.5 max-h-[60vh] overflow-y-auto pr-1">
-            {notifications.map((notif) => (
-              <div
-                key={notif.id}
-                onClick={() => markNotificationRead(notif.id)}
-                className={`p-3 rounded-2xl border transition-all cursor-pointer ${
-                  notif.read
-                    ? 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-800/60 opacity-70'
-                    : 'bg-white dark:bg-slate-800 border-indigo-200 dark:border-indigo-900 shadow-xs'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                    {notif.title}
-                  </h3>
-                  <span className="text-[10px] text-slate-400 shrink-0">{notif.time}</span>
+          {notifications.length === 0 ? (
+            <div className="py-10 text-center">
+              <Bell className="w-10 h-10 text-slate-300 dark:text-slate-700 mx-auto mb-3" />
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                You're all caught up
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-[240px] mx-auto leading-relaxed">
+                No notifications right now. We'll let you know about fee updates,
+                margin alerts and fresh tips here.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1">
+              {notifications.map((notif) => (
+                <div
+                  key={notif.id}
+                  onClick={() => markNotificationRead(notif.id)}
+                  className={`p-3 rounded-2xl border transition-all cursor-pointer ${
+                    notif.read
+                      ? 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-800/60 opacity-70'
+                      : 'bg-white dark:bg-slate-800 border-indigo-200 dark:border-indigo-900 shadow-xs'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start justify-between gap-2 flex-1 min-w-0">
+                      <h3 className={`text-xs font-bold ${notif.read ? 'text-slate-600 dark:text-slate-400' : 'text-slate-900 dark:text-slate-100'}`}>
+                        {notif.title}
+                      </h3>
+                      {!notif.read && (
+                        <span className="shrink-0 w-2 h-2 mt-1 rounded-full bg-indigo-500" aria-label="Unread" />
+                      )}
+                    </div>
+                    <span className="text-[10px] text-slate-400 shrink-0">{notif.time}</span>
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                    {notif.message}
+                  </p>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                  {notif.message}
-                </p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </BottomSheet>
     </>

@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { GSTRate } from '../types';
 import { calculateGST } from '../utils/calculatorEngine';
 import { formatINR } from '../utils/formatters';
-import { ArrowLeft, Copy, Check, Info, ShieldCheck, Zap, Receipt, Sparkles } from 'lucide-react';
+import { ArrowLeft, Copy, Check, ShieldCheck } from 'lucide-react';
 
 export const GSTCalculatorScreen: React.FC = () => {
   const { navigateTo, showSnackbar } = useApp();

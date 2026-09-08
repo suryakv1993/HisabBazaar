@@ -7,13 +7,8 @@ import {
   Trash2, 
   Calculator, 
   Copy, 
-  ArrowLeft, 
   Eye, 
-  TrendingUp, 
-  TrendingDown, 
-  Sparkles,
-  Search,
-  RotateCcw
+  Search
 } from 'lucide-react';
 import { MarketplaceBadge } from '../components/MarketplaceBadge';
 

@@ -6,18 +6,13 @@ import {
   Receipt, 
   Percent, 
   TrendingUp, 
-  TrendingDown, 
   ShoppingBag, 
   ArrowUpRight, 
   ChevronRight,
   Sparkles,
   Zap,
   Package,
-  AlertTriangle,
-  ArrowRight,
-  Building2,
-  CheckCircle2,
-  RefreshCw
+  ArrowRight
 } from 'lucide-react';
 import { formatINR, formatPercent } from '../utils/formatters';
 import { Sparkline } from '../components/MicroCharts';

@@ -4,19 +4,13 @@ import {
   ArrowLeft, 
   Bookmark, 
   Share2, 
-  Download, 
-  TrendingUp, 
-  TrendingDown, 
   CheckCircle2, 
   AlertCircle,
-  Sparkles,
   RotateCcw,
   Target,
   FileText,
   Copy,
-  ChevronDown,
-  ChevronUp,
-  Printer
+  Loader2
 } from 'lucide-react';
 import { formatINR, formatPercentRaw } from '../utils/formatters';
 import { MarketplaceBadge } from '../components/MarketplaceBadge';
@@ -30,13 +24,14 @@ export const CalculationResultScreen: React.FC = () => {
     navigateTo, 
     saveCalculationToHistory, 
     showSnackbar,
-    setCalculatorDraft 
+    setCalculatorDraft,
+    settings
   } = useApp();
 
   const [showDetailedBreakdown, setShowDetailedBreakdown] = useState<boolean>(true);
   const [shareModalOpen, setShareModalOpen] = useState<boolean>(false);
-  const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
   const [targetMarginInput, setTargetMarginInput] = useState<number>(100);
+  const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
 
   useEffect(() => {
     if (currentResult && currentResult.profitMarginPercent >= 20) {
@@ -110,10 +105,19 @@ _Calculated via SellerProfit App_`;
     setShareModalOpen(false);
   };
 
-  const handleDownloadPDF = () => {
-    window.print();
-    setExportModalOpen(false);
-    showSnackbar('Print dialog opened for PDF export', 'info');
+  const handleDownloadPDF = async () => {
+    if (isExportingPdf) return;
+    setIsExportingPdf(true);
+    try {
+      const { generateCalculationPdf } = await import('../utils/pdfExport');
+      generateCalculationPdf(currentResult, settings);
+      showSnackbar('PDF downloaded successfully', 'success');
+    } catch (err) {
+      console.error('PDF export failed', err);
+      showSnackbar('PDF export failed. Please try again.', 'error');
+    } finally {
+      setIsExportingPdf(false);
+    }
   };
 
   return (
@@ -164,11 +168,16 @@ _Calculated via SellerProfit App_`;
           </button>
           <button
             onClick={handleDownloadPDF}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition-colors text-xs font-bold shadow-xs"
-            title="Print or Export PDF"
+            disabled={isExportingPdf}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white transition-colors text-xs font-bold shadow-xs"
+            title={isExportingPdf ? 'Generating PDF...' : 'Download PDF'}
           >
-            <Printer className="w-4 h-4" />
-            <span className="hidden sm:inline">PDF</span>
+            {isExportingPdf ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <FileText className="w-4 h-4" />
+            )}
+            <span className="hidden sm:inline">{isExportingPdf ? 'Generating...' : 'PDF'}</span>
           </button>
         </div>
       </div>

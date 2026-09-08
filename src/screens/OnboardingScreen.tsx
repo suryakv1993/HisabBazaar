@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Calculator, Package, BarChart3, ArrowRight, Check, Store } from 'lucide-react';
+import { Calculator, Package, BarChart3, ArrowRight, Check } from 'lucide-react';
 
 export const OnboardingScreen: React.FC = () => {
   const { completeOnboarding } = useApp();

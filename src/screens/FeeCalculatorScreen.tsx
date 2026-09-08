@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { MarketplaceType } from '../types';
 import { calculateMarketplaceFees, MARKETPLACE_PRESETS } from '../utils/calculatorEngine';
 import { formatINR } from '../utils/formatters';
-import { ArrowLeft, RotateCcw, ShieldAlert, Sparkles, Building2, CheckCircle2, TrendingUp } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Building2 } from 'lucide-react';
 import { MarketplaceBadge } from '../components/MarketplaceBadge';
 
 export const FeeCalculatorScreen: React.FC = () => {

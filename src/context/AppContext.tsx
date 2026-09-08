@@ -195,11 +195,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   });
 
-  // Notifications
+  // Notifications (validated load: handle missing/corrupt localStorage safely)
   const [notifications, setNotifications] = useState<AppNotification[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.NOTIFICATIONS);
-      return saved ? JSON.parse(saved) : SEED_NOTIFICATIONS;
+      if (!saved) return SEED_NOTIFICATIONS;
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        // Defensive: ensure every item has the expected shape
+        return parsed
+          .filter((n) => n && typeof n === 'object')
+          .map((n) => ({
+            id: typeof n.id === 'string' ? n.id : `n-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            title: typeof n.title === 'string' ? n.title : 'Update',
+            message: typeof n.message === 'string' ? n.message : '',
+            time: typeof n.time === 'string' ? n.time : 'Just now',
+            read: typeof n.read === 'boolean' ? n.read : false,
+            type: ['alert', 'tip', 'update'].includes(n.type) ? n.type : 'update',
+          }));
+      }
+      return SEED_NOTIFICATIONS;
     } catch {
       return SEED_NOTIFICATIONS;
     }
@@ -265,6 +280,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.warn('Storage failed', e);
     }
   }, [calculationHistory]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.NOTIFICATIONS, JSON.stringify(notifications));
+    } catch (e) {
+      console.warn('Storage failed', e);
+    }
+  }, [notifications]);
 
   // Apply dark mode class to html document
   useEffect(() => {

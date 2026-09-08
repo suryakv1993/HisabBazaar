@@ -1,23 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { 
-  BarChart3, 
   Download, 
   TrendingUp, 
-  TrendingDown, 
-  Calendar, 
-  ArrowUpRight, 
   ShoppingBag, 
   FileSpreadsheet, 
   FileText,
   PieChart,
   Percent,
   Receipt,
-  Layers,
-  CheckCircle2,
-  AlertCircle
+  Loader2
 } from 'lucide-react';
-import { formatINR, formatPercentRaw } from '../utils/formatters';
+import { formatINR } from '../utils/formatters';
 import { AreaTrendChart, DonutBreakdownChart } from '../components/MicroCharts';
 import { BottomSheet } from '../components/BottomSheet';
 import { MarketplaceBadge } from '../components/MarketplaceBadge';
@@ -30,6 +24,7 @@ export const ReportsScreen: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [activeChartTab, setActiveChartTab] = useState<'profit' | 'sales' | 'margin'>('profit');
   const [exportSheetOpen, setExportSheetOpen] = useState<boolean>(false);
+  const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
 
   // Filter calculation history records by selected timeframe
   const filteredRecords = useMemo(() => {
@@ -246,10 +241,23 @@ export const ReportsScreen: React.FC = () => {
     setExportSheetOpen(false);
   };
 
-  const handleExportPDF = () => {
-    window.print();
-    setExportSheetOpen(false);
-    showSnackbar('Report prepared for printing / PDF export', 'info');
+  const dateFilterLabel =
+    dateFilter === 'today' ? 'Today' : dateFilter === '7days' ? '7 Days' : dateFilter === '30days' ? '30 Days' : 'All Records';
+
+  const handleExportPDF = async () => {
+    if (isExportingPdf) return;
+    setIsExportingPdf(true);
+    try {
+      const { generateReportPdf } = await import('../utils/pdfExport');
+      generateReportPdf(report, calculationHistory, products, settings, dateFilterLabel);
+      setExportSheetOpen(false);
+      showSnackbar('PDF report downloaded successfully', 'success');
+    } catch (err) {
+      console.error('PDF export failed', err);
+      showSnackbar('PDF export failed. Please try again.', 'error');
+    } finally {
+      setIsExportingPdf(false);
+    }
   };
 
   return (
@@ -552,18 +560,23 @@ export const ReportsScreen: React.FC = () => {
 
           <button
             onClick={handleExportPDF}
-            className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between transition-colors group"
+            disabled={isExportingPdf}
+            className="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 border border-slate-200 dark:border-slate-700 flex items-center justify-between transition-colors group disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center">
-                <FileText className="w-5 h-5" />
+                {isExportingPdf ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <FileText className="w-5 h-5" />
+                )}
               </div>
               <div className="text-left">
                 <span className="text-xs font-bold text-slate-900 dark:text-slate-100 block">
-                  Print Report / Save as PDF
+                  {isExportingPdf ? 'Generating PDF...' : 'Download PDF Report'}
                 </span>
                 <span className="text-[10px] text-slate-500">
-                  Standard format printable report summary
+                  {isExportingPdf ? 'Preparing your report' : 'Full itemized report with summary & SKU table'}
                 </span>
               </div>
             </div>

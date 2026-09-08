@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Store, TrendingUp, ShieldCheck, Zap, ShoppingBag } from 'lucide-react';
+import { Store, TrendingUp, ShieldCheck, Zap } from 'lucide-react';
 
 export const SplashScreen: React.FC = () => {
   const { navigateTo, hasSeenOnboarding } = useApp();
